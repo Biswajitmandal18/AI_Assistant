@@ -53,7 +53,13 @@ textarea {
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
+    font-family: inherit;
     transition: 0.2s;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 110px;
 }
 
 /* Input focus */
@@ -72,22 +78,51 @@ button {
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 600;
     transition: 0.3s;
 }
 
 /* Button hover */
-button:hover {
+button:hover:not(:disabled) {
     background: #357abd;
+}
+
+/* Button disabled */
+button:disabled {
+    background: #a4c2e6;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Loading */
+.loading {
+    color: #4a90e2;
+    font-style: italic;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
 /* Output text */
 #answer, #summary {
-    margin-top: 10px;
-    padding: 12px;
+    margin-top: 12px;
+    padding: 14px;
     background: #f0f4ff;
     border-left: 4px solid #4a90e2;
     border-radius: 6px;
-    min-height: 30px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+#answer:empty, #summary:empty {
+    display: none;
+}
+
+/* Error state */
+#answer.error, #summary.error {
+    background: #fff2f2;
+    border-left-color: #e74c3c;
+    color: #c0392b;
 }
 
 /* Divider */
@@ -95,4 +130,13 @@ hr {
     margin: 30px 0;
     border: none;
     border-top: 1px solid #eee;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #7f8c8d;
+    font-size: 14px;
+    font-weight: 500;
 }

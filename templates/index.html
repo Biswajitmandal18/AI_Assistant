@@ -13,61 +13,96 @@
 
         <h2>Ask Anything</h2>
         <form id="askForm">
-            <input type="text" name="question" placeholder="Ask anything..." required>
+            <input type="text" name="question" placeholder="Ask anything..." required autocomplete="off">
             <button type="submit">Ask</button>
         </form>
-        <p id="ans-loading" style="display: none;">Processing...</p>
+        <p id="ans-loading" class="loading" style="display: none;">Processing...</p>
         <p id="answer"></p>
 
         <hr>
 
         <h2>Summarize Email</h2>
         <form id="emailForm">
-            <textarea type="text" name="email" placeholder="Paste your email here.." required></textarea>
+            <textarea name="email" rows="5" placeholder="Paste your email here.." required></textarea>
             <button type="submit">Summarize</button>
         </form>
-        <p id="summary-loading" style="display: none;">Processing...</p>
+        <p id="summary-loading" class="loading" style="display: none;">Processing...</p>
         <p id="summary"></p>
 
     </div>
 
+    <footer class="footer">
+        <p>Made By Biswajit ❤️</p>
+    </footer>
+
 <script>
     document.getElementById("askForm").onsubmit = async (e) => {
         e.preventDefault();
-        let formData = new FormData(e.target);
+        const form = e.target;
+        const btn = form.querySelector("button");
+        const loading = document.getElementById("ans-loading");
+        const answerEl = document.getElementById("answer");
 
-        let loading = document.getElementById("ans-loading");
-        loading.style.display = "block";   // show loader
+        answerEl.innerText = "";
+        answerEl.classList.remove("error");
+        loading.style.display = "block";
+        btn.disabled = true;
 
-        let res = await fetch("/ask", {
-            method: "POST",
-            body: formData
-        });
-
-        let data = await res.json();
-        document.getElementById("answer").innerText = data.response;
-
-        loading.style.display = "none";   // hide loader
+        try {
+            const formData = new FormData(form);
+            const res = await fetch("/ask", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) {
+                answerEl.classList.add("error");
+                answerEl.innerText = data.error || "An unexpected error occurred.";
+            } else {
+                answerEl.innerText = data.response;
+            }
+        } catch (err) {
+            answerEl.classList.add("error");
+            answerEl.innerText = "Network error: Unable to reach the server. Please try again.";
+        } finally {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
     };
 
-document.getElementById("emailForm").onsubmit = async (e) => {
-    e.preventDefault();
-    let formData = new FormData(e.target);
+    document.getElementById("emailForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const btn = form.querySelector("button");
+        const loading = document.getElementById("summary-loading");
+        const summaryEl = document.getElementById("summary");
 
-    let loading = document.getElementById("summary-loading");
-    loading.style.display = "block";
+        summaryEl.innerText = "";
+        summaryEl.classList.remove("error");
+        loading.style.display = "block";
+        btn.disabled = true;
 
-    let res = await fetch("/summarize", {
-        method: "POST",
-        body: formData
-    });
-
-    let data = await res.json();
-    document.getElementById("summary").innerText = data.response;
-
-    loading.style.display = "none";   // hide loader
-};
-
+        try {
+            const formData = new FormData(form);
+            const res = await fetch("/summarize", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) {
+                summaryEl.classList.add("error");
+                summaryEl.innerText = data.error || "An unexpected error occurred.";
+            } else {
+                summaryEl.innerText = data.response;
+            }
+        } catch (err) {
+            summaryEl.classList.add("error");
+            summaryEl.innerText = "Network error: Unable to reach the server. Please try again.";
+        } finally {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
+    };
 </script>
 
 </body>
